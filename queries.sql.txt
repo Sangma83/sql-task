@@ -1,0 +1,105 @@
+-- =====================================================
+-- Vehicle Booking System SQL Queries
+-- =====================================================
+
+-- =========================
+-- Table Creation
+-- =========================
+-- (Use only if tables do not already exist)
+CREATE TABLE IF NOT EXISTS Users (
+    user_id INT PRIMARY KEY,
+    role VARCHAR(20),
+    name VARCHAR(100),
+    email VARCHAR(100) UNIQUE,
+    password VARCHAR(255),
+    phone VARCHAR(20)
+);
+
+CREATE TABLE IF NOT EXISTS Vehicles (
+    vehicle_id INT PRIMARY KEY,
+    vehicle_name VARCHAR(100),
+    vehicle_type VARCHAR(20),
+    model VARCHAR(50),
+    registration_number VARCHAR(50) UNIQUE,
+    price_per_day DECIMAL(10,2),
+    availability_status VARCHAR(20)
+);
+
+CREATE TABLE IF NOT EXISTS Bookings (
+    booking_id INT PRIMARY KEY,
+    user_id INT,
+    vehicle_id INT,
+    start_date DATE,
+    end_date DATE,
+    booking_status VARCHAR(20),
+    total_cost DECIMAL(10,2),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id),
+    FOREIGN KEY (vehicle_id) REFERENCES Vehicles(vehicle_id)
+);
+
+-- =========================
+-- Query 1: JOIN
+-- Description: Retrieve booking information along with customer and vehicle names
+-- =========================
+SELECT 
+    b.booking_id,
+    u.name AS customer_name,
+    v.vehicle_name,
+    b.start_date,
+    b.end_date,
+    b.booking_status,
+    b.total_cost
+FROM 
+    Bookings b
+INNER JOIN 
+    Users u ON b.user_id = u.user_id
+INNER JOIN 
+    Vehicles v ON b.vehicle_id = v.vehicle_id;
+
+-- =========================
+-- Query 2: NOT EXISTS
+-- Description: Find all vehicles that have never been booked
+-- =========================
+SELECT 
+    v.vehicle_id,
+    v.vehicle_name,
+    v.vehicle_type
+FROM 
+    Vehicles v
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM Bookings b
+    WHERE b.vehicle_id = v.vehicle_id
+);
+
+-- =========================
+-- Query 3: WHERE
+-- Description: Retrieve all available vehicles of a specific type (e.g., cars)
+-- =========================
+SELECT 
+    vehicle_id,
+    vehicle_name,
+    model,
+    registration_number,
+    price_per_day
+FROM 
+    Vehicles
+WHERE 
+    vehicle_type = 'Car' 
+    AND availability_status = 'Available';
+
+-- =========================
+-- Query 4: GROUP BY & HAVING
+-- Description: Count total bookings for each vehicle and show only those with more than 2 bookings
+-- =========================
+SELECT 
+    v.vehicle_name,
+    COUNT(b.booking_id) AS total_bookings
+FROM 
+    Vehicles v
+INNER JOIN 
+    Bookings b ON v.vehicle_id = b.vehicle_id
+GROUP BY 
+    v.vehicle_name
+HAVING 
+    COUNT(b.booking_id) > 2;
