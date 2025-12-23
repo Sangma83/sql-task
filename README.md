@@ -14,6 +14,7 @@ The database contains the following tables:
 ## SQL Queries
 
 ### **Query 1: JOIN**
+
 **Purpose**: Retrieve booking information along with customer name and vehicle name.  
 
 ```sql
@@ -34,14 +35,9 @@ INNER JOIN
 
 
 
-
-
-
 ### **Query 2: NOT EXISTS**
 
-**Purpose**: Find all vehicles that have never been booked.
 
-```sql
 SELECT 
     v.vehicle_id,
     v.vehicle_name,
@@ -56,9 +52,7 @@ WHERE NOT EXISTS (
 
 ### **Query 3: WHERE**
 
-**Purpose**: Retrieve all available vehicles of a specific type (e.g., Cars).
 
-```sql
 SELECT 
     vehicle_id,
     vehicle_name,
@@ -73,9 +67,7 @@ WHERE
 
 ### **Query 4: GROUP BY & HAVING**
 
-**Purpose**: Count total bookings for each vehicle and display only those with more than 2 bookings.
 
-```sql
 SELECT 
     v.vehicle_name,
     COUNT(b.booking_id) AS total_bookings
