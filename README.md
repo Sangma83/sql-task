@@ -31,3 +31,62 @@ INNER JOIN
     Users u ON b.user_id = u.user_id
 INNER JOIN 
     Vehicles v ON b.vehicle_id = v.vehicle_id;
+
+
+
+
+
+
+### **Query 2: NOT EXISTS**
+
+**Purpose**: Find all vehicles that have never been booked.
+
+```sql
+SELECT 
+    v.vehicle_id,
+    v.vehicle_name,
+    v.vehicle_type
+FROM 
+    Vehicles v
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM Bookings b
+    WHERE b.vehicle_id = v.vehicle_id
+);
+
+### **Query 3: WHERE**
+
+**Purpose**: Retrieve all available vehicles of a specific type (e.g., Cars).
+
+```sql
+SELECT 
+    vehicle_id,
+    vehicle_name,
+    model,
+    registration_number,
+    price_per_day
+FROM 
+    Vehicles
+WHERE 
+    vehicle_type = 'Car' 
+    AND availability_status = 'Available';
+
+### **Query 4: GROUP BY & HAVING**
+
+**Purpose**: Count total bookings for each vehicle and display only those with more than 2 bookings.
+
+```sql
+SELECT 
+    v.vehicle_name,
+    COUNT(b.booking_id) AS total_bookings
+FROM 
+    Vehicles v
+INNER JOIN 
+    Bookings b ON v.vehicle_id = b.vehicle_id
+GROUP BY 
+    v.vehicle_name
+HAVING 
+    COUNT(b.booking_id) > 2;
+
+
+
